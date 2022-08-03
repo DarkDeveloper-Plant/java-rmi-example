@@ -26,7 +26,7 @@ public interface IRemoteLibraryModule extends Remote {
      * @throws DuplicateException if the book is already present in the library.
      * @throws AuthorizationException the user was not authorized for this operation.
      */
-    public void addBook (Book book, Session session) throws RemoteException,
+    void addBook(Book book, Session session) throws RemoteException,
             NullPointerException, DuplicateException, AuthorizationException;
     
     /**
@@ -36,7 +36,7 @@ public interface IRemoteLibraryModule extends Remote {
      * @throws RemoteException
      * @throws AuthorizationException
      */
-    public void removeBook (Book book, Session session)
+    void removeBook(Book book, Session session)
             throws RemoteException, AuthorizationException;
     
     /**
@@ -46,7 +46,7 @@ public interface IRemoteLibraryModule extends Remote {
      * @throws RemoteException
      * @throws AuthorizationException
      */
-    public void removeBook (String isbn, Session session)
+    void removeBook(String isbn, Session session)
             throws RemoteException, AuthorizationException;
     
     /**
@@ -57,26 +57,26 @@ public interface IRemoteLibraryModule extends Remote {
      * @throws RemoteException
      * @throws BookNotFoundException
      */
-    public Book lookupBook (String isbn, String owner)
+    Book lookupBook(String isbn, String owner)
             throws RemoteException, BookNotFoundException;
     
     /**
      * @return the list of items.
      * @throws RemoteException
      */
-    public List<Book> getBooks() throws RemoteException;
+    List<Book> getBooks() throws RemoteException;
     
     /**
      * @param isbn the ISBN of the book.
      * @return the owners for a book with given ISBN.
      * @throws RemoteException 
      */
-    public List<String> getOwnersForBook(String isbn) throws RemoteException;
+    List<String> getOwnersForBook(String isbn) throws RemoteException;
     
     /**
      * @param owner the owner of the books.
      * @return the books of a given owner.
      * @throws RemoteException
      */
-    public List<Book> getBooksForOwner(String owner) throws RemoteException;
+    List<Book> getBooksForOwner(String owner) throws RemoteException;
 }

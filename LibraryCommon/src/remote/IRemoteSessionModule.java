@@ -21,7 +21,7 @@ public interface IRemoteSessionModule extends Remote {
      * @throws AuthenticationException
      * @throws RemoteException
      */
-    public Session authenticate(String username, String password)
+    Session authenticate(String username, String password)
             throws AuthenticationException, RemoteException;
 
     /**
@@ -29,11 +29,11 @@ public interface IRemoteSessionModule extends Remote {
      * @return whether or not the session is valid.
      * @throws RemoteException
      */
-    public boolean isAuthenticated(Session session) throws RemoteException;
+    boolean isAuthenticated(Session session) throws RemoteException;
     
     /**
      * @param username the username of the user to log off.
      * @throws RemoteException
      */
-    public void destroySession(String username) throws RemoteException;
+    void destroySession(String username) throws RemoteException;
 }

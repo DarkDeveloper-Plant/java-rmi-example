@@ -4,10 +4,8 @@ import remote.IRemoteSessionModule;
 import args.Book;
 import args.Rating;
 import system.User;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+
+import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import system.Library;
@@ -22,7 +20,7 @@ import system.SessionModule;
 
 /**
  * The Main class contains the main method to run the server.
- * 
+ *
  * @author Joris Schelfaut, Gertjan Vanthienen
  */
 public class Main {
@@ -34,23 +32,19 @@ public class Main {
         try {
             // Instantiate a new library object :
             Library library = new Library();
-            
+
             // Load some test data :
             try {
-                loadUsersFromCSV(library, "src/users.csv");
-                loadBooksFromCSV(library, "src/books.csv");
+                loadUsersFromCSV(library, "LibraryServer/src/users.csv");
+                loadBooksFromCSV(library, "LibraryServer/src/books.csv");
             } catch (IOException ex) {
                 Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            // Set the security manager :
-            if (System.getSecurityManager() != null) {
-                System.setSecurityManager(null);
-            }
-            
+
+
             // Create a new registry with given port :
             Registry registry = LocateRegistry.createRegistry(RMISettings.REGISTRY_PORT);
-            
+
             // Register the remote objects :
             IRemoteSessionModule sessionModule = new SessionModule(library);
             IRemoteSessionModule stubSessionModule = (IRemoteSessionModule) UnicastRemoteObject.exportObject(sessionModule, 0);
@@ -59,23 +53,23 @@ public class Main {
             IRemoteLibraryModule libraryModule = new LibraryModule(library, sessionModule);
             IRemoteLibraryModule stubLibraryModule = (IRemoteLibraryModule) UnicastRemoteObject.exportObject(libraryModule, 0);
             registry.rebind(RMISettings.LIBRARY_SERVICE_NAME, stubLibraryModule);
-            
+
         } catch (RemoteException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
      * @param library the library to load the users to.
      * @param file the CSV file to load the users from.
      * @throws FileNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     public static void loadUsersFromCSV(Library library, String file)
             throws FileNotFoundException, IOException {
-        
+
         BufferedReader in = new BufferedReader(new FileReader(file));
-        
+
         while (in.ready()) {
             String line = in.readLine();
             if (line.startsWith("#")) continue;
@@ -87,7 +81,7 @@ public class Main {
             } catch (IllegalArgumentException iae) {
                 printException(iae);
             }
-            
+
             try {
                 library.addUser(user);
             } catch (DuplicateException | NullPointerException ex) {
@@ -95,19 +89,19 @@ public class Main {
             }
         }
     }
-    
+
     /**
      * Loads the library data from a CSV file (Comma-separated values).
      * @param library the library to load the data to.
      * @param file the CSV file to read data from.
      * @throws FileNotFoundException
-     * @throws IOException 
+     * @throws IOException
      */
     public static void loadBooksFromCSV(Library library, String file)
             throws FileNotFoundException, IOException {
-        
+
         BufferedReader in = new BufferedReader(new FileReader(file));
-        
+
         while (in.ready()) {
             String line = in.readLine();
             if (line.startsWith("#")) continue;
@@ -123,7 +117,7 @@ public class Main {
             } catch (IllegalArgumentException iae) {
                 printException(iae);
             }
-            
+
             try {
                 library.addBook(book);
             } catch (DuplicateException | NullPointerException ex) {
@@ -131,7 +125,7 @@ public class Main {
             }
         }
     }
-    
+
     /**
      * @param ex the exception to be printed.
      */

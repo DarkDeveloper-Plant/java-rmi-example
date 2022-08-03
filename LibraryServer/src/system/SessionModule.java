@@ -1,12 +1,10 @@
 package system;
 
-import args.Book;
-import args.Rating;
+import args.Session;
 import exceptions.AuthenticationException;
 import exceptions.UserNotFoundException;
 import remote.IRemoteSessionModule;
-import args.Session;
-import exceptions.DuplicateException;
+
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
@@ -17,11 +15,11 @@ import java.util.Set;
 
 /**
  * Manages the user sessions.
- * 
+ *
  * @author Joris Schelfaut
  */
 public class SessionModule implements IRemoteSessionModule {
-    
+
     private final Library library;
     private final Set<Session> sessions;
 
@@ -37,7 +35,7 @@ public class SessionModule implements IRemoteSessionModule {
     @Override
     public Session authenticate(String username, String password)
             throws AuthenticationException, RemoteException {
-        User user = null;
+        User user;
         try {
             user = this.library.lookupUser(username);
         } catch (UserNotFoundException unfe) {
@@ -57,9 +55,7 @@ public class SessionModule implements IRemoteSessionModule {
 
     @Override
     public void destroySession(String username) throws RemoteException {
-        for (Session s : this.sessions) {
-            if (s.getUsername().equals(username)) this.sessions.remove(s);
-        }
+        this.sessions.removeIf(s -> s.getUsername().equals(username));
     }
 
     /**
@@ -78,7 +74,7 @@ public class SessionModule implements IRemoteSessionModule {
         }
         return sb.toString();
     }
-    
+
     /**
      * @param user the user to be authenticated.
      * @param password the password to be checked.
@@ -86,18 +82,18 @@ public class SessionModule implements IRemoteSessionModule {
      */
     private boolean checkPassword(User user, String password) {
         try {
-            if (md5(password).equals(user.getPassword())) return true;
+            if (md5(password).equals(md5(user.getPassword()))) return true;
         } catch (UnsupportedEncodingException | NoSuchAlgorithmException ex) {
             return false;
         }
         return false;
     }
-    
+
     /**
      * @param password the password to be hashed.
      * @return the md5 hash of the given password.
      * @throws UnsupportedEncodingException
-     * @throws NoSuchAlgorithmException 
+     * @throws NoSuchAlgorithmException
      */
     private String md5 (String password) throws UnsupportedEncodingException, NoSuchAlgorithmException {
         byte[] bytes = password.getBytes("UTF-8");
